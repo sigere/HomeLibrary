@@ -40,22 +40,6 @@ bool addBook(struct spis* library, struct book newbie)
     library->koniec->nast = newNode;
     library->koniec = newNode;
     return true;
-
-    // for (int i = 0; i < LIB_SIZE; i++) //znajdz wolne miejsce na ksiazke w bibliotece
-    //     if (library[i] == NULL) {// znalazlem wolne miejsce pod indexem i
-
-    //         newbie.authorName = "Adam";
-    //         newbie.authorSurname = "Mickiewicz";
-    //         newbie.hardCover = true;
-    //         newbie.topic = "Wacki i Slowacki";
-    //         newbie.year = 2021;
-    //         newbie.pages = 100;
-    //         newbie.type = Fantasy;
-
-    //         library[i] = &newbie;
-    //         return true;
-    //     }
-    // return false;
 }
 
 bool write(struct spis* library) {
@@ -92,7 +76,7 @@ struct spis* read()
     return library;
 }
 
-struct book* getByAuthorName(struct book** library, char* authorName)
+struct book* getByAuthorName(struct spis* library, char* authorName)
 {
     //wyszukiwanie w library ksiazki o book->authorName identycznym do authorName(parametr)
 
@@ -116,8 +100,43 @@ void deletebytopic(spis* SP, const char nazwa[])
 }
 
 
-void sortByTopic(struct book** library, bool asc)
+void sortByTopic(struct spis* library, bool asc)
 {
-    //posortuj library, w zaleznosci od asc (true -> rosnaco, false -> malejaco)
+    if(!library->poczatek)
+        return;
+    
+    struct spis* newLibrary = malloc(sizeof(struct spis));
+    newLibrary->poczatek = NULL;
+    newLibrary->koniec = NULL;
+
+    struct elem* preTemp = NULL;
+    struct elem* preSuspect = NULL;
+    struct elem* suspect = library->poczatek;
+    struct elem* temp = library->poczatek;
+    while(library->poczatek){
+        temp = library->poczatek;
+        preTemp = NULL;
+        preSuspect = NULL;
+        suspect = library->poczatek;
+
+        while (temp) {
+            if      ((asc && strcmp(temp->Dane.topic, suspect->Dane.topic) < 0)
+                ||  (!asc && strcmp(temp->Dane.topic, suspect->Dane.topic) > 0))
+            {
+                preSuspect = preTemp;
+                suspect = temp;
+            }
+            preTemp = temp;
+            temp = temp->nast;
+        }
+
+        if(preSuspect)
+            preSuspect->nast = suspect->nast;
+        if(library->poczatek == suspect)
+            library->poczatek = suspect->nast;
+        addBook(newLibrary,*suspect);
+    }
+    free(library);
+    library = newLibrary;
 
 }
