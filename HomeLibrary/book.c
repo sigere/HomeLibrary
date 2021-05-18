@@ -2,77 +2,67 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-
-enum book_type
-{
-    Fantasy,
-    Drama,
-    Comedy
-};
-
-typedef struct book {
-    char *authorName;
-    char *authorSurname;
-    char *topic;
-    unsigned int year;
-    bool hardCover;
-    unsigned pages;
-    enum book_type type;
-}book;
-
-typedef struct elem
-{
-    book Dane;
-    struct elem* nast;
-} elem;
-
-typedef struct spis
-{
-    elem* poczatek;
-    elem* koniec;
-} spis;
+#include "book.h"
 
 bool addBook(struct spis* library, struct book newbie)
 {
     struct elem* newNode = malloc(sizeof(struct elem));
     newNode->Dane = newbie;
     newNode->nast = NULL;
+    if (!library->poczatek) {
+        library->poczatek = newNode;
+        library->koniec = newNode;
+        return true;
+    }
     library->koniec->nast = newNode;
     library->koniec = newNode;
     return true;
 }
 
 bool write(struct spis* library) {
-    FILE* file = fopen("library.dat", "wb"); //"wb", zamiast "ab" - celowo wymazujemy dotychczasowe dane w library.dat
+    FILE* file;
+    printf("numer bledu fopen_s: %d\n", fopen_s(&file,"library.dat", "w")); //"wb", zamiast "ab" - celowo wymazujemy dotychczasowe dane w library.dat
     if (!file) return false; //nie udalo sie otworzyc pliku
 
     struct elem* tmp = library->poczatek;
     struct elem* del;
     while(tmp){
-        fwrite(tmp->Dane, sizeof(struct book), 1, file);
+        struct book b = tmp->Dane;
+        fwrite(&b, sizeof(struct book), 1, file);
         del = tmp;
         tmp = tmp->nast;
         free(del);
     }
     free(library);
+    fclose(file);
     return true;
 }
 
 struct spis* read()
 {
-    FILE* file = fopen("library.dat", "rb");
-    if (!file) return NULL;//nie udalo sie otworzyc pliku
+    FILE* file = NULL;
+    fopen_s(&file,"library.dat", "r");
 
     struct spis* library = (struct spis*)malloc(sizeof(struct spis));
+    library->koniec = NULL;
+    library->poczatek = NULL;
 
-    struct book* input = (struct book*)malloc(sizeof(struct book));
+    if (!file)//nie udalo sie otworzyc pliku
+        return library;
 
-    while (fread(*input, sizeof(struct book), 1, file))
+    struct book input;
+    
+    while (fread(&input, sizeof(struct book), 1, file))
     {
-        if(!addBook(library, input))
+        /*printf("sizeof: %d", sizeof(struct book));
+        printf("debug %s\n", input.topic);*/
+        if (!addBook(library, input)) {
+            printf("err addBook!\n");
+            fclose(file);
             return false;
-        input = (struct book*)malloc(sizeof(struct book));
+        }
     }
+    fclose(file);
     return library;
 }
 
@@ -105,7 +95,7 @@ void sortByTopic(struct spis* library, bool asc)
     if(!library->poczatek)
         return;
     
-    struct spis* newLibrary = malloc(sizeof(struct spis));
+    struct spis* newLibrary = (struct spis*)malloc(sizeof(struct spis));
     newLibrary->poczatek = NULL;
     newLibrary->koniec = NULL;
 
@@ -130,13 +120,23 @@ void sortByTopic(struct spis* library, bool asc)
             temp = temp->nast;
         }
 
-        if(preSuspect)
+        if (preSuspect) {
             preSuspect->nast = suspect->nast;
-        if(library->poczatek == suspect)
+            //printf("jest presuspect\n");
+        }
+            
+        if (library->poczatek == suspect)
+        {
+            //printf("poczatek == suspect\n");
+            //if(!suspect->nast) printf("nie ma susp->nast!\n");
+            //printf("a\n");
             library->poczatek = suspect->nast;
-        addBook(newLibrary,*suspect);
+            //printf("b\n");
+        }
+            
+        addBook(newLibrary,suspect->Dane);
     }
-    free(library);
-    library = newLibrary;
-
+    library->koniec = newLibrary->koniec;
+    library->poczatek = newLibrary->poczatek;
+    free(newLibrary);
 }
