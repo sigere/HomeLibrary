@@ -35,5 +35,6 @@ bool addBook(struct spis* library, struct book newbie);
 bool write(struct spis* library);
 struct spis* read();
 struct book* getByAuthorName(struct spis* library, char* authorName);
-void deletebytopic(spis* SP, const char nazwa[]);
+bool deleteByTopic(spis* SP, const char nazwa[]);
 void sortByTopic(struct spis* library, bool asc);
+struct book* getByTitle(spis* SP, const char title[]);

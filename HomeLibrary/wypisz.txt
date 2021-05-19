@@ -1,0 +1,16 @@
+void wypisz_ksiazki(struct spis* biblioteka)
+{
+	struct elem* tmp = biblioteka->poczatek;
+	//tutaj moze jakis naglowek typu "printf("zawartosc biblioteczki:");
+
+	while (tmp)
+	{
+		//wartosci kolejnych ksiazek sa dostepne w nastepujacy spsob:
+		//tmp->Dane.authorName;
+		//tmp->Dane.authorSurname;
+		//itd..
+		//trzeba je wyswietlic w formie "tableki", cokolwiek to znaczy (trzba sie pobawic printf'ami)
+		
+		tmp = tmp->nast;
+	}
+}
