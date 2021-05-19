@@ -118,12 +118,12 @@ void dodaj_ksiazke(struct spis* biblioteka) {
 
 	if (addBook(biblioteka, newbie))
 	{
-		//wpisz, ze udalo sie
+		printf("Ksiazka zostala dodana pomyslnie.\n");
 		write(biblioteka);
 	}
 	else
 	{
-		//wpisz ze sie nie uda³o
+		printf("Nie udalo sie dodac ksiazki.\n");
 	}
 }
 
@@ -151,7 +151,7 @@ void wyszukaj_ksiazke(struct spis* biblioteka) {
 				wypisz_ksiazke(ksiazka);
 			else
 			{
-				//wpisz ze nie znaleziono ksiazki
+				printf("Nie znaleziono ksiazki w biblioteczce podanego autora.\n");
 			}
 			break;
 		case 2:
@@ -163,7 +163,7 @@ void wyszukaj_ksiazke(struct spis* biblioteka) {
 				wypisz_ksiazke(ksiazka);
 			else
 			{
-				//wpisz ze nie znaleziono ksiazki
+				printf("Nie znaleziono ksiazki w biblioteczce o takim tytule.\n");
 			}
 			break;
 		default:
@@ -178,13 +178,12 @@ void usun_ksiazke(struct spis* biblioteka) {
 	scanf_s("%s", title, sizeof(title));
 	if (deleteByTopic(biblioteka, title))
 	{
-		//wpisz, ze sie uda³o
+		printf("Ksiazka zostala usunieta z biblioteczki\n");
 		write(biblioteka);
 	}
 	else
 	{
-		//wypisz ze nie znaleziono ksiazki o tym tytule
-
+		printf("Nie udalo sie usunac ksiazki. Podano zly tytul.\n");
 	}
 
 }
@@ -206,13 +205,27 @@ void wypisz_ksiazki(struct spis* biblioteka)
 
 void sortuj_ksiazki(struct spis* biblioteka)
 {
-	//zapytac uzytkownika czy rosnaco czy malejaco
-	//jesli rosnaco:
-	sortByTopic(biblioteka, true);
-
-	//jesli malajaco:
-	//sortByTopic(biblioteka, false);
-
+	printf("Wybierz metode sortowania: 1 - rosnaco lub 2 - malejaco.\n");
+	int sortowanie;
+	int oki = 0;
+	do {
+		if (scanf_s("%d", &sortowanie) < 1) {
+			while ((getchar()) != '\n');
+			sortowanie = 3;
+		}
+		switch (sortowanie) {
+		case 1:
+			sortByTopic(biblioteka, true);
+			oki = 1;
+			break;
+		case 2:
+			sortByTopic(biblioteka, false);
+			oki = 1;
+			break;
+		default:
+			printf("Prosze o wybranie operacji 1 lub 2.\n");
+		}
+	} while (oki != 1);
 	write(biblioteka);
 }
 
@@ -224,7 +237,7 @@ int main()
 	int a;
 	do {
 		printf("\nMozliwe do wykonania operacje:\n");
-		printf("0 - wyjscie\n1 - dodaj ksiazke do biblioteki\n2 - wyszukaj ksiazke w bibliotece\n3 - usun ksiazke z biblioteki\n4 - posortuj ksiazki\n5 - wyswietl zawartosc\n");
+		printf("0 - wyjscie\n1 - dodaj ksiazke do biblioteki\n2 - wyszukaj ksiazke w bibliotece\n3 - usun ksiazke z biblioteki\n4 - posortuj ksiazki po tytule\n5 - wyswietl zawartosc\n");
 		printf("Wybierz numer operacji:\n");
 		if (scanf_s("%d", &a) < 1) {
 			while ((getchar()) != '\n');
