@@ -20,9 +20,9 @@ void dodaj_ksiazke(struct spis* biblioteka) {
 	struct book newbie;
 	char name[50], surname[50], title[100];
 	printf("podaj imie i nazwisko autora:\n");
-	scanf_s("%s\n%s", name, sizeof(name), surname, sizeof(surname));
+	scanf_s("%s\n%s", newbie.authorName, sizeof(newbie.authorName), newbie.authorSurname, sizeof(newbie.authorSurname));
 	printf("podaj tytul ksiazki:\n");
-	scanf_s("%s", title, sizeof(title));
+	scanf_s("%s", newbie.topic, sizeof(newbie.topic));
 	int c;
 	int ok = 0;
 	printf("Wybierz rodziaj okladki: 1, gdy miekka / 2, gdy twarda\n");
@@ -107,7 +107,7 @@ void dodaj_ksiazke(struct spis* biblioteka) {
 	if (addBook(biblioteka, newbie))
 	{
 		//wpisz, ze udalo sie
-		write(biblioteka);
+		//write(biblioteka);
 	}
 	else
 	{
