@@ -59,12 +59,12 @@ struct spis* read()
 	return library;
 }
 
-struct book* getByAuthorName(spis* SP, const char authorName[], const char authorSurname[])
+struct book* getByAuthorName(spis* SP, const char authorSurname[])
 {
 	elem* prev = 0, * tmp = SP->poczatek;
 	while (tmp)
 	{
-		if (!strcmp(authorSurname, tmp->Dane.authorSurname) && !strcmp(authorName, tmp->Dane.authorName))
+		if (!strcmp(authorSurname, tmp->Dane.authorSurname))
 		{
 			return &tmp->Dane;
 		}

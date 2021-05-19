@@ -11,9 +11,21 @@ void wypisz_ksiazke(struct book* b)
 	printf("Nazwisko autora:\t%s\n", b->authorSurname);
 	printf("Tytul ksiazki:  \t%s\n", b->topic);
 	printf("Rok wydania:    \t%d\n", b->year);
-	printf("Rodzaj okladki: \t%d\n", b->hardCover);
+	printf("Rodzaj okladki: \t");
+	b->hardCover ? printf("twarda\n") : printf("miekka\n");
 	printf("Liczba stron:   \t%d\n", b->pages);
-	printf("Rodzaj ksiazki: \t%d\n", b->type);
+	printf("Rodzaj ksiazki: \t");
+	switch ((int)b->type) {
+	case 0:
+		printf("Fantastyka\n");
+		break;
+	case 1:
+		printf("Dramat\n");
+		break;
+	case 2:
+		printf("Komedia\n");
+		break;
+	}
 }
 
 void dodaj_ksiazke(struct spis* biblioteka) {
@@ -107,7 +119,7 @@ void dodaj_ksiazke(struct spis* biblioteka) {
 	if (addBook(biblioteka, newbie))
 	{
 		//wpisz, ze udalo sie
-		//write(biblioteka);
+		write(biblioteka);
 	}
 	else
 	{
@@ -137,6 +149,10 @@ void wyszukaj_ksiazke(struct spis* biblioteka) {
 			ksiazka = getByAuthorName(biblioteka, surname);
 			if (ksiazka)
 				wypisz_ksiazke(ksiazka);
+			else
+			{
+				//wpisz ze nie znaleziono ksiazki
+			}
 			break;
 		case 2:
 			printf("Podaj tytul ksiazki:\n");
@@ -145,6 +161,10 @@ void wyszukaj_ksiazke(struct spis* biblioteka) {
 			ksiazka = getByTitle(biblioteka, title);
 			if (ksiazka)
 				wypisz_ksiazke(ksiazka);
+			else
+			{
+				//wpisz ze nie znaleziono ksiazki
+			}
 			break;
 		default:
 			printf("Niepoprawne dane, wprowadz cyfre z zakresu 1-2.\n");
@@ -200,10 +220,10 @@ int main()
 {
 	struct spis* library = read();
 	system("cls");
-	printf("Hello library!\n");
+	printf("Hello library!");
 	int a;
 	do {
-		printf("Mozliwe do wykonania operacje:\n");
+		printf("\nMozliwe do wykonania operacje:\n");
 		printf("0 - wyjscie\n1 - dodaj ksiazke do biblioteki\n2 - wyszukaj ksiazke w bibliotece\n3 - usun ksiazke z biblioteki\n4 - posortuj ksiazki\n5 - wyswietl zawartosc\n");
 		printf("Wybierz numer operacji:\n");
 		if (scanf_s("%d", &a) < 1) {
